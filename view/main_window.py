@@ -12,11 +12,11 @@ class MainWindow(QtWidgets.QDialog):
         self.table_model = table_model
 
         self.setWindowTitle("Weekly Checklist App")
-
+        self.setMinimumSize(500, 300)
         self.main_layout = QtWidgets.QVBoxLayout()
 
         #Table handler
-        self.table_view = TableView(self.table_model)
+        self.table_view = TableView(self.table_model, self)
         self.main_layout.addWidget(self.table_view)
 
         #Tasks handler
@@ -24,3 +24,4 @@ class MainWindow(QtWidgets.QDialog):
         self.main_layout.addWidget(self.tasks_manager_view)
         
         self.setLayout(self.main_layout)
+

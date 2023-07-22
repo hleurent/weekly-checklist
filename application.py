@@ -26,18 +26,24 @@ class Application:
         task_added_to_data = self.data_manager.add_task_name(name)
 
         if (task_added_to_data):
-
-            self.table_model.beginInsertRows(QtCore.QModelIndex(), self.table_model.rowCount(), self.table_model.rowCount())
-            self.table_model.endInsertRows()
+            self.table_model.dataChanged.emit()
 
         return task_added_to_data
     
+    def delete_task(self, task_index):
+        self.data_manager.delete_task(self.tasks[task_index])
+        self.table_model.dataChanged.emit()
+        
     def is_task_done(self, day_index, task_index):
         return self.data_manager.task_exists(self.WEEK_DAYS[day_index], self.tasks[task_index])
     
     def change_task_state(self, day_index, task_index):
         self.data_manager.toggle_task_state(self.WEEK_DAYS[day_index], self.tasks[task_index]) 
     
+    def set_task_undone(self, day_index, task_index):
+        self.data_manager.set_task_undone(self.WEEK_DAYS[day_index], self.tasks[task_index])
+
     def run(self):
         self.window.show()
+
         return self.app.exec_()

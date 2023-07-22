@@ -50,19 +50,38 @@ class DataManager:
             self.data["tasks"] = [name]
             self.save(self.data)
             return True
-        
+    
+    def delete_task(self, task_name: str):
+        self.data["tasks"].remove(task_name)
+
+        for day in self.data["days"]:
+            if task_name in self.data["days"][day]:
+                self.data["days"][day].remove(task_name)
+
+        self.save(self.data)
+
     def task_exists(self, day:str, task:str):
         try:
             return task in self.data["days"][day]
         except KeyError:
             return False
 
-    def toggle_task_state(self, day:str, task_name: str) -> None:
+    def toggle_task_state(self, day: str, task_name: str) -> None:
         try:
             if (self.task_exists(day, task_name)):
                 self.data["days"][day].remove(task_name)
             else :
                 self.data["days"][day].append(task_name)
+        except KeyError:
+            self.data["days"][day] = [task_name]
+            
+        self.save(self.data)
+
+
+    def set_task_undone(self, day: str, task_name: str) -> None:
+        try:
+            if (self.task_exists(day, task_name)):
+                self.data["days"][day].remove(task_name)
         except KeyError:
             self.data["days"][day] = [task_name]
             
