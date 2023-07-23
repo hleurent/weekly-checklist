@@ -4,10 +4,17 @@ import os
 class DataManager:
 
     def __init__(self) -> None:
+        self.WEEK_DAYS = ["Mon.", "Tue.", "Wed.", "Thu.", "Fri.", "Sat.", "Sun."]
+
         __location__ = os.path.realpath(
                             os.path.join(os.getcwd(), os.path.dirname(__file__)))
-        self.file_path = os.path.join(__location__, '../checklists/WeeklyCheckList.json')
+        self.file_path = os.path.join(__location__, '../checklists/NewTestFile.json')
         self.data = self.load()
+
+        if self.data == {}:
+            self.init_data()
+            self.data = self.load()
+            print(self.data)
     
     def load(self):
         data = {}
@@ -31,6 +38,10 @@ class DataManager:
             json.dump(data, outfile, indent = 4)
 
         return True
+
+    def init_data(self):
+        data = {"tasks" : [], "weeks" : []}
+        self.save(data)
 
     def get_all_tasks(self):
         try:
@@ -87,4 +98,30 @@ class DataManager:
             
         self.save(self.data)
 
+    def get_last_week(self):
+        return self.data["weeks"][-1] if len(self.data["weeks"]) > 0 else None
+
+    def get_all_week_names(self):
+        return [week["name"] for week in self.data["weeks"]]
+    
+    def get_week(self, week_name):
+        print("week name : " + week_name)
+        return next((week for week in self.data["weeks"] if week["name"] == week_name), None)
+    
+    def add_week(self, week_name) -> bool:
+        if week_name != "" and week_name not in self.get_all_week_names():
+            self.data["weeks"].append(
+                {
+                    "name" : week_name,
+                    "days" : {}
+                }
+            )
+
+            for day in self.WEEK_DAYS:
+                self.data["weeks"][-1]["days"][day] = []
+
+            self.save(self.data)
+            return True
+        
+        return False
 
